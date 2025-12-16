@@ -53,6 +53,12 @@ const Dashboard = () => {
         }
     };
 
+    const [selectedStep, setSelectedStep] = useState(null);
+
+    const handleStepClick = (step) => {
+        setSelectedStep(step);
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-dark-bg transition-colors duration-300 flex flex-col">
             <Navbar />
@@ -147,9 +153,7 @@ const Dashboard = () => {
                                             Learning Streak
                                         </dt>
                                         <dd>
-                                            <dd>
-                                                <div className="text-2xl font-bold text-gray-900 dark:text-white">{user.streak || 0} Days</div>
-                                            </dd>
+                                            <div className="text-2xl font-bold text-gray-900 dark:text-white">{user.streak || 0} Days</div>
                                         </dd>
                                     </dl>
                                 </div>
@@ -181,10 +185,10 @@ const Dashboard = () => {
                                                     {stepIdx !== user.roadmap.length - 1 ? (
                                                         <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
                                                     ) : null}
-                                                    <div className="relative flex space-x-3">
+                                                    <div className="relative flex space-x-3 items-start group">
                                                         <div>
                                                             <button
-                                                                onClick={() => handleToggleStatus(stepIdx, step.status)}
+                                                                onClick={(e) => { e.stopPropagation(); handleToggleStatus(stepIdx, step.status); }}
                                                                 className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white dark:ring-dark-card cursor-pointer transition-colors duration-200 hover:scale-110 ${step.status === 'completed' ? 'bg-green-500 hover:bg-green-600' :
                                                                     step.status === 'in-progress' ? 'bg-primary-500 hover:bg-primary-600' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
                                                                     }`}>
@@ -192,13 +196,23 @@ const Dashboard = () => {
                                                                     <Circle className="w-4 h-4 text-white" />}
                                                             </button>
                                                         </div>
-                                                        <div className="min-w-0 flex-1 pt-1.5 ">
-                                                            <h4 className={`text-lg font-bold transition-all duration-300 ${step.status === 'completed' ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-white'}`}>{step.title}</h4>
+                                                        <div
+                                                            className="min-w-0 flex-1 pt-1.5 cursor-pointer"
+                                                            onClick={() => handleStepClick(step)}
+                                                        >
+                                                            <h4 className={`text-lg font-bold transition-all duration-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 ${step.status === 'completed' ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-white'}`}>
+                                                                {step.title}
+                                                            </h4>
                                                             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{step.description}</p>
+                                                            {step.details && (
+                                                                <span className="inline-block mt-2 text-xs font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2 py-0.5 rounded">
+                                                                    View Content
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         <div className="text-right text-sm">
                                                             <button
-                                                                onClick={() => handleToggleStatus(stepIdx, step.status)}
+                                                                onClick={(e) => { e.stopPropagation(); handleToggleStatus(stepIdx, step.status); }}
                                                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize transition-colors ${step.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 cursor-pointer' :
                                                                     'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 cursor-pointer'
                                                                     }`}>
@@ -232,6 +246,103 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Step Detail Modal */}
+                {selectedStep && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+                        <div className="bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-gray-100 dark:border-gray-700">
+                            <div className="p-6">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {selectedStep.title}
+                                    </h3>
+                                    <button
+                                        onClick={() => setSelectedStep(null)}
+                                        className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                                    >
+                                        <span className="sr-only">Close</span>
+                                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">
+                                    {selectedStep.description}
+                                </p>
+
+                                {selectedStep.details ? (
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h4 className="text-sm font-bold uppercase tracking-wide text-primary-600 dark:text-primary-400 mb-2">
+                                                Mentor's Note 💡
+                                            </h4>
+                                            <div className="bg-primary-50 dark:bg-primary-900/20 p-4 rounded-xl text-gray-800 dark:text-gray-200">
+                                                {selectedStep.details.summary}
+                                            </div>
+                                        </div>
+
+                                        {selectedStep.details.keyTerms && (
+                                            <div>
+                                                <h4 className="text-sm font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+                                                    Key Concepts
+                                                </h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {selectedStep.details.keyTerms.map(term => (
+                                                        <span key={term} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium border border-gray-200 dark:border-gray-700">
+                                                            {term}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {selectedStep.details.resources && (
+                                            <div>
+                                                <h4 className="text-sm font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+                                                    Learning Resources 📚
+                                                </h4>
+                                                <ul className="space-y-3">
+                                                    {selectedStep.details.resources.map((res, idx) => (
+                                                        <li key={idx}>
+                                                            <a
+                                                                href={res.url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary-500 dark:hover:border-primary-500 hover:bg-gray-50 dark:hover:bg-dark-bg transition-all group"
+                                                            >
+                                                                <span className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mr-3">
+                                                                    {res.type === 'video' ? '▶️' : '📄'}
+                                                                </span>
+                                                                <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400">
+                                                                    {res.title}
+                                                                </span>
+                                                                <ArrowUpRight className="ml-auto w-4 h-4 text-gray-400 group-hover:text-primary-500" />
+                                                            </a>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 text-gray-500 dark:text-gray-400 italic">
+                                        Content coming soon for this step...
+                                    </div>
+                                )}
+
+                                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex justify-end">
+                                    <button
+                                        onClick={() => setSelectedStep(null)}
+                                        className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-medium transition-colors"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             </main>
         </div>

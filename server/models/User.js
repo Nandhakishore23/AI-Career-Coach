@@ -1,6 +1,29 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const ResourceSchema = new mongoose.Schema({
+    title: String,
+    url: String,
+    type: String
+}, { _id: false });
+
+const DetailsSchema = new mongoose.Schema({
+    summary: String,
+    keyTerms: [String],
+    resources: [ResourceSchema]
+}, { _id: false });
+
+const RoadmapStepSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+    status: {
+        type: String,
+        enum: ['pending', 'in-progress', 'completed'],
+        default: 'pending'
+    },
+    details: DetailsSchema
+}, { _id: false });
+
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -32,17 +55,7 @@ const UserSchema = new mongoose.Schema({
     experienceLevel: {
         type: String, // e.g., "Junior"
     },
-    roadmap: [
-        {
-            title: String, // e.g., "Learn React"
-            description: String,
-            status: {
-                type: String,
-                enum: ['pending', 'in-progress', 'completed'],
-                default: 'pending'
-            }
-        }
-    ],
+    roadmap: [RoadmapStepSchema],
     createdAt: {
         type: Date,
         default: Date.now
