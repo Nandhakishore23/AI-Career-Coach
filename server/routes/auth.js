@@ -98,4 +98,47 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// @desc    Get user profile
+// @route   GET /api/auth/profile
+// @access  Private
+const protect = async (req, res, next) => {
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        try {
+            token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+            req.user = await User.findById(decoded.id).select('-password');
+            if (!req.user) return res.status(401).json({ message: 'User not found' });
+            next();
+        } catch (error) {
+            res.status(401).json({ message: 'Not authorized, token failed' });
+        }
+    } else {
+        res.status(401).json({ message: 'Not authorized, no token' });
+    }
+};
+
+router.get('/profile', protect, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            careerGoal: user.careerGoal,
+            experienceLevel: user.experienceLevel,
+            targetCompany: user.targetCompany,
+            weeklyHours: user.weeklyHours,
+            learningStyle: user.learningStyle,
+            currentSkills: user.currentSkills,
+            streak: user.streak,
+            createdAt: user.createdAt,
+            roadmap: user.roadmap // Needed for stats
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;

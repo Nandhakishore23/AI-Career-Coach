@@ -51,30 +51,65 @@ const roadmaps = require('../data/roadmaps');
 // @desc    Generate/Set Roadmap
 // @route   POST /api/roadmap/generate
 // @access  Private
+const axios = require('axios');
+
+// @desc    Generate/Set Roadmap
+// @route   POST /api/roadmap/generate
+// @access  Private
 router.post('/generate', protect, async (req, res) => {
-    const { careerGoal, experienceLevel } = req.body;
+    console.log("DEBUG: HIT GENERATE ROUTE - CHECKING FOR AI SERVICE");
+    const {
+        careerGoal, experienceLevel, targetCompany,
+        weeklyHours, learningStyle, currentSkills, githubLink
+    } = req.body;
 
-    // Get Roadmap from data file
-    let generatedRoadmap = roadmaps[careerGoal] || roadmaps['Frontend Developer']; // Default fallback
+    console.log('[Roadmap Gen] Requesting AI Roadmap for:', req.user.email);
 
-    // Simple adjustment for experience (Mock Logic)
-    // If Senior, we might mark early steps as completed, but for now we give full roadmap
-    // with a slightly modified status to show we care about the level.
-    if (experienceLevel === 'Senior (5+ years)') {
-        generatedRoadmap = generatedRoadmap.map((step, index) => ({
-            ...step,
-            status: index < 3 ? 'completed' : 'pending' // Auto-complete basics
-        }));
-    } else if (experienceLevel === 'Mid-Level (3-5 years)') {
-        generatedRoadmap = generatedRoadmap.map((step, index) => ({
-            ...step,
-            status: index < 1 ? 'completed' : 'pending'
-        }));
+    let generatedRoadmap = [];
+
+    try {
+        // Call Python AI Service
+        const aiResponse = await axios.post('http://127.0.0.1:5002/generate-roadmap', {
+            careerGoal, experienceLevel, targetCompany,
+            weeklyHours, learningStyle, currentSkills
+        });
+
+        if (aiResponse.data && aiResponse.data.roadmap) {
+            console.log('[Roadmap Gen] AI Success');
+            generatedRoadmap = aiResponse.data.roadmap;
+        } else {
+            throw new Error('Invalid AI Response');
+        }
+
+    } catch (aiError) {
+        console.error('[Roadmap Gen] AI Failed:', aiError.message);
+
+        let statusCode = 500;
+        let errorMessage = "AI Generation Failed. Please check server logs.";
+
+        if (aiError.response) {
+            console.error('[Roadmap Gen] AI Response Data:', aiError.response.data);
+            if (aiError.response.status === 429) {
+                statusCode = 429;
+                errorMessage = "AI Service is busy (Rate Limit). Please wait 30 seconds and try again.";
+            } else if (aiError.response.status === 503) {
+                statusCode = 503;
+                errorMessage = "AI Service is temporarily unavailable.";
+            }
+        }
+
+        return res.status(statusCode).json({ message: errorMessage, error: aiError.message });
     }
 
     try {
         req.user.careerGoal = careerGoal;
         req.user.experienceLevel = experienceLevel;
+        req.user.targetCompany = targetCompany;
+        req.user.weeklyHours = weeklyHours;
+        req.user.learningStyle = learningStyle;
+        req.user.currentSkills = currentSkills;
+        req.user.githubLink = githubLink;
+
         req.user.roadmap = generatedRoadmap;
         await req.user.save();
 
@@ -88,28 +123,43 @@ router.post('/generate', protect, async (req, res) => {
     }
 });
 
-// @desc    Update Roadmap Step Status
+// @desc    Get Detailed Content for a Topic
+// @route   POST /api/roadmap/topic-content
+// @access  Private
+router.post('/topic-content', protect, async (req, res) => {
+    const { topic, role } = req.body;
+    try {
+        const response = await axios.post('http://127.0.0.1:5002/generate-topic-content', {
+            topic,
+            level: req.user.experienceLevel, // Pass user's actual level
+            role: req.user.careerGoal || role
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error("Content Gen Error:", error.message);
+        res.status(500).json({ message: "Failed to generate content" });
+    }
+});
+
+// @desc    Update Roadmap Step Status (Deep Nested Update)
 // @route   PUT /api/roadmap/update-status
 // @access  Private
 router.put('/update-status', protect, async (req, res) => {
-    const { index, status } = req.body;
-    console.log(`[Roadmap Update] User: ${req.user._id} Index: ${index} Status: ${status}`);
+    const { phaseIndex, moduleIndex, topicIndex, status } = req.body;
 
     try {
-        if (!req.user.roadmap || !req.user.roadmap[index]) {
-            console.error('[Roadmap Update] Step not found');
-            return res.status(404).json({ message: 'Roadmap step not found' });
+        const user = req.user;
+
+        if (!user.roadmap[phaseIndex]?.modules[moduleIndex]?.topics[topicIndex]) {
+            return res.status(404).json({ message: 'Topic not found' });
         }
 
-        req.user.roadmap[index].status = status;
-        req.user.markModified('roadmap'); // Force Mongoose to convert the change
+        user.roadmap[phaseIndex].modules[moduleIndex].topics[topicIndex].status = status;
+        user.markModified('roadmap');
+        await user.save();
 
-        await req.user.save();
-        console.log('[Roadmap Update] Success');
-
-        res.json(req.user.roadmap);
+        res.json(user.roadmap);
     } catch (error) {
-        console.error("Update Status Error:", error);
         res.status(500).json({ message: error.message });
     }
 });

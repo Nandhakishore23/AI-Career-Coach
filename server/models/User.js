@@ -1,27 +1,27 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const ResourceSchema = new mongoose.Schema({
-    title: String,
-    url: String,
-    type: String
-}, { _id: false });
 
-const DetailsSchema = new mongoose.Schema({
-    summary: String,
-    keyTerms: [String],
-    resources: [ResourceSchema]
-}, { _id: false });
 
-const RoadmapStepSchema = new mongoose.Schema({
+const TopicSchema = new mongoose.Schema({
     title: String,
-    description: String,
+    difficulty: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced', 'Beginner-Intermediate', 'Intermediate-Advanced'] },
+    outcome: String,
     status: {
         type: String,
         enum: ['pending', 'in-progress', 'completed'],
         default: 'pending'
-    },
-    details: DetailsSchema
+    }
+}, { _id: false });
+
+const ModuleSchema = new mongoose.Schema({
+    title: String,
+    topics: [TopicSchema]
+}, { _id: false });
+
+const PhaseSchema = new mongoose.Schema({
+    title: String,
+    modules: [ModuleSchema]
 }, { _id: false });
 
 const UserSchema = new mongoose.Schema({
@@ -55,7 +55,18 @@ const UserSchema = new mongoose.Schema({
     experienceLevel: {
         type: String, // e.g., "Junior"
     },
-    roadmap: [RoadmapStepSchema],
+    targetCompany: {
+        type: String, // e.g., "FAANG", "Startup", "Service-Based"
+    },
+    weeklyHours: {
+        type: Number, // e.g., 10
+    },
+    learningStyle: {
+        type: String, // e.g., "Video", "Text", "Project"
+    },
+    currentSkills: [String], // e.g., ["HTML", "CSS"]
+    githubLink: String,
+    roadmap: [PhaseSchema], // Changed from flat roadmap to Phases
     createdAt: {
         type: Date,
         default: Date.now
