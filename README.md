@@ -6,7 +6,7 @@ A real-time AI-enhanced conversational model that simulates interviews, generate
 ## Tech Stack
 - **Frontend:** React, Vite, Tailwind CSS
 - **Backend:** Node.js, Express, MongoDB
-- **AI Service:** Python, Flask, OpenAI/HuggingFace
+- **AI Service:** Python, Flask, Gemini/HuggingFace
 
 ## Getting Started
 
