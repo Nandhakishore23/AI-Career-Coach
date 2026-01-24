@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5005/api',
+    baseURL: 'https://ai-career-coach-backend-one.vercel.app/api',
     headers: {
         'Content-Type': 'application/json',
     },
