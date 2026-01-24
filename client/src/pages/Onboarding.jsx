@@ -101,10 +101,9 @@ const Onboarding = () => {
         if (!discoveryData.interests || !discoveryData.workingStyle) return;
         setIsAnalyzing(true);
         try {
-            // Call AI Service (Directly or via proxy if needed, assuming direct for now or enable CORS on AI service)
-            // Ideally should be via backend proxy to hide API key, but consistent with current arch
-            const res = await api.post('http://localhost:5002/recommend-career', discoveryData);
-            // Note: In prod, route through main server. For dev/demo, direct is faster if CORS allowed.
+            // Call AI Service
+            const aiUrl = import.meta.env.VITE_AI_URL || 'http://localhost:5002';
+            const res = await axios.post(`${aiUrl}/recommend-career`, discoveryData);
             // If CORS fails, we might need a proxy. Let's assume direct works or I'll fix it.
             // Actually, best practice is to route via server if possible, but let's try direct to 5002 first 
             // OR reuse the existing pattern if any. 
