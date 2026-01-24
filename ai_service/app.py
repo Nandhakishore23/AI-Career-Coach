@@ -133,5 +133,52 @@ def generate_topic_content():
              return jsonify({"error": error_msg}), 429
         return jsonify({"error": error_msg}), 500
 
+@app.route('/recommend-career', methods=['POST'])
+def recommend_career():
+    try:
+        data = request.json
+        interests = data.get('interests')
+        working_style = data.get('workingStyle')
+        skills = data.get('skills', 'None')
+        
+        print(f"Recommending career for: {interests} ({working_style})")
+        
+        prompt = f"""
+        Act as an expert Career Counselor.
+        The user is deciding on a tech career path.
+        
+        USER PROFILE:
+        - Interests/Hobbies: {interests}
+        - Working Style: {working_style}
+        - Current Skills: {skills}
+        
+        TASK:
+        Analyze the profile and suggest top 3 Tech Roles that fit them best.
+        
+        JSON OUTPUT REQUIREMENTS:
+        Return a JSON object with a key "recommendations" containing an array of 3 objects:
+        [
+          {{
+            "role": "Job Title (e.g. Frontend Developer)",
+            "matchPercentage": 95,
+            "reason": "Why this fits their interests/style in 1 sentence.",
+            "salaryRange": "$X-Y k",
+            "learningCurve": "Easy/Medium/Hard"
+          }}
+        ]
+        
+        JSON OUTPUT:
+        """
+        
+        response = model.generate_content(prompt)
+        text_response = response.text.replace('```json', '').replace('```', '').strip()
+        result = json.loads(text_response)
+        
+        return jsonify(result)
+
+    except Exception as e:
+        print("Career Rec Error:", e)
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
