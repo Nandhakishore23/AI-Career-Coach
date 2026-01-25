@@ -69,7 +69,8 @@ router.post('/generate', protect, async (req, res) => {
 
     try {
         // Call Python AI Service
-        const aiResponse = await axios.post('http://127.0.0.1:5002/generate-roadmap', {
+        const aiServiceUrl = process.env.AI_SERVICE_URL || 'http://127.0.0.1:5002';
+        const aiResponse = await axios.post(`${aiServiceUrl}/generate-roadmap`, {
             careerGoal, experienceLevel, targetCompany,
             weeklyHours, learningStyle, currentSkills
         });
@@ -129,7 +130,8 @@ router.post('/generate', protect, async (req, res) => {
 router.post('/topic-content', protect, async (req, res) => {
     const { topic, role } = req.body;
     try {
-        const response = await axios.post('http://127.0.0.1:5002/generate-topic-content', {
+        const aiServiceUrl = process.env.AI_SERVICE_URL || 'http://127.0.0.1:5002';
+        const response = await axios.post(`${aiServiceUrl}/generate-topic-content`, {
             topic,
             level: req.user.experienceLevel, // Pass user's actual level
             role: req.user.careerGoal || role
