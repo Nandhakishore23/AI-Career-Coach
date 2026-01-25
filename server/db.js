@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
     try {
         const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ai-interview-coach', {
-            // mongoose 6+ doesn't need deprecated options
+            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
         });
 
         console.log(`MongoDB Connected: ${conn.connection.host}`);
