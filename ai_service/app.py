@@ -4,6 +4,9 @@ from flask_cors import CORS
 import google.generativeai as genai
 from dotenv import load_dotenv
 import json
+import base64
+import io
+from pypdf import PdfReader
 
 load_dotenv()
 
@@ -178,6 +181,270 @@ def recommend_career():
 
     except Exception as e:
         print("Career Rec Error:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/interview/start', methods=['POST'])
+def start_interview():
+    try:
+        data = request.json
+        role = data.get('role', 'Frontend Developer')
+        topic = data.get('topic', 'General')
+        difficulty = data.get('difficulty', 'Intermediate')
+        
+        print(f"Starting Interview: {role} - {topic} ({difficulty})")
+        
+        if 'resume' in data and data['resume']:
+            try:
+                # Decode Base64 PDF
+                pdf_data = base64.b64decode(data['resume'])
+                pdf_file = io.BytesIO(pdf_data)
+                reader = PdfReader(pdf_file)
+                resume_text = ""
+                for page in reader.pages:
+                    resume_text += page.extract_text() + "\n"
+                
+                print(f"Extracted Resume Text ({len(resume_text)} chars)")
+                
+                # Contextual Prompt with Resume
+                prompt = f"""
+                Act as a Friendly {role} Interviewer.
+                I have uploaded my resume.
+                
+                RESUME CONTENT:
+                {resume_text[:3000]} # Limit characters to avoid token limits
+                
+                Start a technical interview about "{topic}".
+                
+                CRITICAL INSTRUCTION:
+                - Read the Resume logic above.
+                - Start with a question specifically related to a project or skill mentioned in the resume.
+                - Example: "I see you used Redux in your e-commerce project. Can you explain how you handled async actions?"
+                - If the resume is empty or unclear, fall back to a customary introductory question.
+                
+                Generate the FIRST question.
+                
+                JSON OUTPUT:
+                {{
+                    "question": "The actual question text",
+                    "context": "I'm asking this because it's listed on your resume..."
+                }}
+                """
+            except Exception as e:
+                print("Resume Parsing Error:", e)
+                # Fallback prompt if resume fails
+                prompt = f"""
+                Act as a Friendly {role} Interviewer.
+                Start a technical interview about "{topic}".
+                
+                CRITICAL INSTRUCTION:
+                - Start with a VERY CUSTOMARY, SIMPLE, INTRODUCTORY question.
+                - Example: "What is React?"
+                
+                Generate the FIRST question.
+                
+                JSON OUTPUT:
+                {{
+                    "question": "The actual question text",
+                    "context": "Brief context on why this is important (1 sentence)"
+                }}
+                """
+        else:
+             prompt = f"""
+            Act as a Friendly {role} Interviewer.
+            Start a technical interview about "{topic}".
+            
+            CRITICAL INSTRUCTION:
+            - Start with a VERY CUSTOMARY, SIMPLE, INTRODUCTORY question.
+            - Do not ask complex scenarios yet.
+            - Example: "What is React?" or "Explain the difference between let and var."
+            
+            Generate the FIRST question.
+            
+            JSON OUTPUT:
+            {{
+                "question": "The actual question text",
+                "context": "Brief context on why this is important (1 sentence)"
+            }}
+            """
+        
+        response = model.generate_content(prompt)
+        text_response = response.text.replace('```json', '').replace('```', '').strip()
+        
+        # Robust JSON cleaning
+        if text_response.startswith('```json'):
+            text_response = text_response.split('```json')[1]
+        if text_response.endswith('```'):
+            text_response = text_response.split('```')[0]
+        text_response = text_response.strip()
+
+        try:
+            result = json.loads(text_response)
+            return jsonify(result)
+        except json.JSONDecodeError as je:
+            print(f"JSON Error in start_interview: {je}")
+            print(f"Raw Response: {response.text}")
+            return jsonify({"error": "Failed to parse AI response"}), 500
+    
+    except Exception as e:
+        print("Interview Start Error:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/interview/analyze', methods=['POST'])
+def analyze_interview():
+    try:
+        data = request.json
+        current_question = data.get('question')
+        user_answer = data.get('answer')
+        role = data.get('role', 'Developer')
+        
+        print(f"Analyzing Answer for: {role}")
+        
+        prompt = f"""
+        Act as a Senior {role} Interviewer.
+        
+        Question: "{current_question}"
+        User Answer: "{user_answer}"
+        
+        TASK:
+        1. Rate the answer (1-10).
+        2. Provide feedback (Pros/Cons).
+        3. Generate the NEXT question (follow-up or new topic).
+        
+        JSON OUTPUT:
+        {{
+            "score": 7,
+            "feedback": "Good mention of X, but you missed Y.",
+            "suggested_answer": "Better way to say it...",
+            "next_question": " The next question text",
+            "next_context": "Context for the next question"
+        }}
+        """
+        
+        response = model.generate_content(prompt)
+        # Robust JSON cleaning
+        text_response = response.text.strip()
+        if text_response.startswith('```json'):
+            text_response = text_response.split('```json')[1]
+        if text_response.endswith('```'):
+            text_response = text_response.split('```')[0]
+        text_response = text_response.strip()
+            
+        result = json.loads(text_response)
+        
+        return jsonify(result)
+        
+    except json.JSONDecodeError as je:
+        print(f"JSON Error: {je}")
+        print(f"Raw Response: {response.text}")
+        return jsonify({"error": "Failed to parse AI response"}), 500
+        
+    except Exception as e:
+        print("Interview Analysis Error:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/interview/end', methods=['POST'])
+def end_interview():
+    try:
+        data = request.json
+        history = data.get('history', [])
+        role = data.get('role', 'Developer')
+        
+        print(f"Generating Report for: {role} ({len(history)} interactions)")
+        
+        # Format history for the prompt
+        history_text = ""
+        for idx, item in enumerate(history):
+            history_text += f"\nQ{idx+1}: {item.get('question')}\nUser Answer: {item.get('answer')}\nScore: {item.get('score')}\nAI Feedback: {item.get('feedback')}\n"
+        
+        prompt = f"""
+        Act as a Hiring Manager for a {role} position.
+        Review the following interview session history and provide a final performance report.
+        
+        INTERVIEW HISTORY:
+        {history_text}
+        
+        TASK:
+        1. Calculate an overall score (0-100).
+        2. Identify top 3 strengths.
+        3. Identify top 3 weaknesses.
+        4. Suggest ONE key focus area to improve.
+        
+        JSON OUTPUT:
+        {{
+            "overall_score": 85,
+            "strengths": ["Clear communication", "Good knowledge of React hooks", "Strong problem solving"],
+            "weaknesses": ["Missed edge cases", "Weak on CSS Grid", "Spoke too fast"],
+            "suggestion": "Focus on deep diving into CSS Layouts and accessible design patterns.",
+            "summary": "A brief 2-sentence summary of the candidate's performance."
+        }}
+        """
+        
+        response = model.generate_content(prompt)
+        text_response = response.text.replace('```json', '').replace('```', '').strip()
+        
+        # Robust JSON cleaning
+        if text_response.startswith('```json'):
+            text_response = text_response.split('```json')[1]
+        if text_response.endswith('```'):
+            text_response = text_response.split('```')[0]
+        text_response = text_response.strip()
+
+        result = json.loads(text_response)
+        return jsonify(result)
+        
+    except Exception as e:
+        print("Interview End Error:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/assessment/generate', methods=['POST'])
+def generate_assessment():
+    try:
+        data = request.json
+        topic = data.get('topic', 'General')
+        difficulty = data.get('difficulty', 'Intermediate')
+        count = data.get('count', 5)
+        
+        print(f"Generating Assessment: {topic} ({difficulty}) - {count} Qs")
+        
+        prompt = f"""
+        Act as a Technical Interviewer.
+        Generate a multiple-choice skill assessment for:
+        - Topic: {topic}
+        - Difficulty: {difficulty}
+        - Question Count: {count}
+        
+        REQUIREMENTS:
+        1. Questions must be technical and test practical knowledge (code snippets allowed).
+        2. Provide 4 options for each question.
+        3. Clearly mark the correct answer index (0-3).
+        4. Provide a brief explanation for the correct answer.
+        
+        JSON OUTPUT:
+        [
+            {{
+                "question": "What is the output of console.log(typeof null)?",
+                "options": ["object", "null", "undefined", "number"],
+                "correct_index": 0,
+                "explanation": "In JavaScript, typeof null returns 'object' due to a legacy bug."
+            }}
+        ]
+        """
+        
+        response = model.generate_content(prompt)
+        text_response = response.text.replace('```json', '').replace('```', '').strip()
+        
+        # Robust JSON cleaning
+        if text_response.startswith('```json'):
+            text_response = text_response.split('```json')[1]
+        if text_response.endswith('```'):
+            text_response = text_response.split('```')[0]
+        text_response = text_response.strip()
+
+        result = json.loads(text_response)
+        return jsonify(result)
+        
+    except Exception as e:
+        print("Assessment Gen Error:", e)
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':

@@ -65,6 +65,13 @@ const UserSchema = new mongoose.Schema({
         type: String, // e.g., "Video", "Text", "Project"
     },
     currentSkills: [String], // e.g., ["HTML", "CSS"]
+    skills: [{
+        name: String,
+        level: String,
+        score: Number,
+        badge: String, // 'Gold', 'Silver', 'Bronze'
+        date: { type: Date, default: Date.now }
+    }],
     githubLink: String,
     roadmap: [PhaseSchema], // Changed from flat roadmap to Phases
     createdAt: {

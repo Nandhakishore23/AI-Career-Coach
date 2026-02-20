@@ -15,7 +15,8 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Routes
 app.use((req, res, next) => {
@@ -25,12 +26,21 @@ app.use((req, res, next) => {
 const authRoutes = require('./routes/auth');
 const roadmapRoutes = require('./routes/roadmap');
 
+const interviewRoutes = require('./routes/interview');
+const assessmentRoutes = require('./routes/assessment');
+
 // Routes - Support both /api/* and root * for robust deployment
 app.use('/api/auth', authRoutes);
 app.use('/auth', authRoutes);
 
 app.use('/api/roadmap', roadmapRoutes);
 app.use('/roadmap', roadmapRoutes);
+
+app.use('/api/interview', interviewRoutes);
+app.use('/interview', interviewRoutes);
+
+app.use('/api/assessment', assessmentRoutes);
+app.use('/assessment', assessmentRoutes);
 
 app.get('/', (req, res) => {
     res.send('AI Interview Coach Server is Running');

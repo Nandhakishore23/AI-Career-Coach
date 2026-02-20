@@ -166,6 +166,27 @@ const UserProfile = () => {
                             <Zap className="w-5 h-5 mr-2 text-yellow-500" /> Verified Skills
                         </h3>
                         <div className="flex flex-wrap gap-2">
+                            {profile.skills && profile.skills.length > 0 && (
+                                <div className="w-full border-t border-gray-100 dark:border-gray-800 pt-4 mt-2">
+                                    <label className="text-xs font-bold text-gray-400 uppercase mb-2 block">Verified Badges</label>
+                                    <div className="flex flex-wrap gap-3">
+                                        {profile.skills.map((skill, idx) => (
+                                            <div key={idx} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
+                                                <Award className={`w-5 h-5 ${skill.badge === 'Gold' ? 'text-yellow-400' :
+                                                        skill.badge === 'Silver' ? 'text-gray-400' :
+                                                            'text-orange-400'
+                                                    }`} />
+                                                <div className="text-sm">
+                                                    <div className="font-bold text-gray-900 dark:text-white leading-none">{skill.name}</div>
+                                                    <div className="text-xs text-gray-500">{skill.badge} • {skill.score}%</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <label className="text-xs font-bold text-gray-400 uppercase mb-2 block mt-4">Self-Reported Skills</label>
                             {profile.currentSkills && profile.currentSkills.length > 0 ? (
                                 profile.currentSkills.map((skill, idx) => (
                                     <span key={idx} className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
@@ -202,8 +223,8 @@ const UserProfile = () => {
                                         </div>
                                         <div className="text-right">
                                             <span className={`text-xs font-bold uppercase px-2 py-1 rounded ${topic.status === 'in-progress'
-                                                    ? 'bg-blue-100 text-blue-700'
-                                                    : 'bg-gray-100 text-gray-600'
+                                                ? 'bg-blue-100 text-blue-700'
+                                                : 'bg-gray-100 text-gray-600'
                                                 }`}>
                                                 {topic.status === 'in-progress' ? 'In Progress' : 'Up Next'}
                                             </span>

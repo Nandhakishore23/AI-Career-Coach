@@ -132,6 +132,7 @@ router.get('/profile', protect, async (req, res) => {
             weeklyHours: user.weeklyHours,
             learningStyle: user.learningStyle,
             currentSkills: user.currentSkills,
+            skills: user.skills, // Calculated badges
             streak: user.streak,
             createdAt: user.createdAt,
             roadmap: user.roadmap // Needed for stats
