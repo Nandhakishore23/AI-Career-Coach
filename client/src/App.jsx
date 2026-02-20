@@ -11,6 +11,7 @@ import InterviewSetup from './pages/InterviewSetup';
 import InterviewSession from './pages/InterviewSession';
 import ResumeBuilder from './pages/ResumeBuilder';
 import CodingArena from './pages/CodingArena';
+import Dashboard from './pages/Dashboard';
 import UserProfile from './pages/UserProfile';
 import SkillAssessment from './pages/SkillAssessment';
 
@@ -31,7 +32,8 @@ function App() {
 
           {/* Dashboard Nested Routes */}
           <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<Navigate to="roadmap" replace />} />
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<Dashboard />} />
             <Route path="roadmap" element={<RoadmapTracker />} />
             <Route path="coding" element={<CodingArena />} />
             <Route path="profile" element={<UserProfile />} />

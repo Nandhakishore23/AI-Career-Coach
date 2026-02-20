@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
-import { User, Mail, Briefcase, Clock, Zap, BookOpen, Award, TrendingUp, Calendar, Target } from 'lucide-react';
+import { User, Mail, Briefcase, Clock, Zap, BookOpen, Award, TrendingUp, Calendar, Target, Code } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
@@ -115,7 +115,7 @@ const UserProfile = () => {
                 </div>
 
                 {/* Mini Stats */}
-                <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+                <div className="grid grid-cols-3 gap-4 w-full md:w-auto">
                     <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl text-center">
                         <div className="text-2xl font-bold text-gray-900 dark:text-white">{profile.streak || 0} 🔥</div>
                         <div className="text-xs text-gray-500 uppercase tracking-wider">Day Streak</div>
@@ -124,8 +124,41 @@ const UserProfile = () => {
                         <div className="text-2xl font-bold text-gray-900 dark:text-white">{completionRate}%</div>
                         <div className="text-xs text-gray-500 uppercase tracking-wider">Completed</div>
                     </div>
+                    <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl text-center">
+                        <div className="text-2xl font-bold text-emerald-500">{(profile.solvedProblems || []).length}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wider">Solved</div>
+                    </div>
                 </div>
             </div>
+
+            {/* Coding Stats Bar */}
+            {(profile.solvedProblems || []).length > 0 && (
+                <div className="bg-white dark:bg-dark-card rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <Code className="w-5 h-5 mr-2 text-emerald-500" /> Problems Solved
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-emerald-50 dark:bg-emerald-500/10 p-4 rounded-xl text-center border border-emerald-100 dark:border-emerald-500/20">
+                            <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                                {(profile.solvedProblems || []).filter(p => p.difficulty === 'Easy').length}
+                            </div>
+                            <div className="text-xs text-emerald-500/70 font-bold uppercase">Easy</div>
+                        </div>
+                        <div className="bg-amber-50 dark:bg-amber-500/10 p-4 rounded-xl text-center border border-amber-100 dark:border-amber-500/20">
+                            <div className="text-xl font-bold text-amber-600 dark:text-amber-400">
+                                {(profile.solvedProblems || []).filter(p => p.difficulty === 'Medium').length}
+                            </div>
+                            <div className="text-xs text-amber-500/70 font-bold uppercase">Medium</div>
+                        </div>
+                        <div className="bg-rose-50 dark:bg-rose-500/10 p-4 rounded-xl text-center border border-rose-100 dark:border-rose-500/20">
+                            <div className="text-xl font-bold text-rose-600 dark:text-rose-400">
+                                {(profile.solvedProblems || []).filter(p => p.difficulty === 'Hard').length}
+                            </div>
+                            <div className="text-xs text-rose-500/70 font-bold uppercase">Hard</div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Profile Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -173,8 +206,8 @@ const UserProfile = () => {
                                         {profile.skills.map((skill, idx) => (
                                             <div key={idx} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
                                                 <Award className={`w-5 h-5 ${skill.badge === 'Gold' ? 'text-yellow-400' :
-                                                        skill.badge === 'Silver' ? 'text-gray-400' :
-                                                            'text-orange-400'
+                                                    skill.badge === 'Silver' ? 'text-gray-400' :
+                                                        'text-orange-400'
                                                     }`} />
                                                 <div className="text-sm">
                                                     <div className="font-bold text-gray-900 dark:text-white leading-none">{skill.name}</div>

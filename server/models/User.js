@@ -78,6 +78,13 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    solvedProblems: [{
+        problemId: String,
+        title: String,
+        difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard'] },
+        language: String,
+        solvedAt: { type: Date, default: Date.now }
+    }],
     streak: {
         type: Number,
         default: 0

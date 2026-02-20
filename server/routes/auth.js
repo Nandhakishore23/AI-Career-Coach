@@ -135,7 +135,8 @@ router.get('/profile', protect, async (req, res) => {
             skills: user.skills, // Calculated badges
             streak: user.streak,
             createdAt: user.createdAt,
-            roadmap: user.roadmap // Needed for stats
+            roadmap: user.roadmap, // Needed for stats
+            solvedProblems: user.solvedProblems || []
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

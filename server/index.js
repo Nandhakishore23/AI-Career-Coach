@@ -28,6 +28,7 @@ const roadmapRoutes = require('./routes/roadmap');
 
 const interviewRoutes = require('./routes/interview');
 const assessmentRoutes = require('./routes/assessment');
+const codingRoutes = require('./routes/coding');
 
 // Routes - Support both /api/* and root * for robust deployment
 app.use('/api/auth', authRoutes);
@@ -41,6 +42,9 @@ app.use('/interview', interviewRoutes);
 
 app.use('/api/assessment', assessmentRoutes);
 app.use('/assessment', assessmentRoutes);
+
+app.use('/api/coding', codingRoutes);
+app.use('/coding', codingRoutes);
 
 app.get('/', (req, res) => {
     res.send('AI Interview Coach Server is Running');
