@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import {
     Layout, BookOpen, Mic, FileText, Briefcase,
-    Menu, X, Terminal, User
+    Menu, X, Terminal, User, Award, BarChart3
 } from 'lucide-react';
 
 const DashboardLayout = () => {
@@ -12,12 +12,14 @@ const DashboardLayout = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const navItems = [
+        { path: '/dashboard/home', label: 'Dashboard', icon: BarChart3 },
         { path: '/dashboard/roadmap', label: 'My Roadmap', icon: Layout },
+        { path: '/dashboard/assessment', label: 'Skill Assessment', icon: Award },
         { path: '/dashboard/coding', label: 'Coding Arena', icon: Terminal },
         { path: '/dashboard/profile', label: 'My Profile', icon: User },
         { path: '/dashboard/interviews', label: 'Mock Interviews', icon: Mic },
         { path: '/dashboard/resume', label: 'Resume Builder', icon: FileText },
-        { path: '/jobs', label: 'Job Portal', icon: Briefcase, external: true }, // Placeholder for external link
+        { path: '/jobs', label: 'Job Portal', icon: Briefcase, external: true },
     ];
 
     return (

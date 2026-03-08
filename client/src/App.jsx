@@ -7,9 +7,13 @@ import DashboardLayout from './components/DashboardLayout';
 import RoadmapTracker from './components/RoadmapTracker';
 // New Pages
 import MockInterviews from './pages/MockInterviews';
+import InterviewSetup from './pages/InterviewSetup';
+import InterviewSession from './pages/InterviewSession';
 import ResumeBuilder from './pages/ResumeBuilder';
 import CodingArena from './pages/CodingArena';
+import Dashboard from './pages/Dashboard';
 import UserProfile from './pages/UserProfile';
+import SkillAssessment from './pages/SkillAssessment';
 
 import Onboarding from './pages/Onboarding';
 import TopicPage from './pages/TopicPage';
@@ -28,11 +32,15 @@ function App() {
 
           {/* Dashboard Nested Routes */}
           <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<Navigate to="roadmap" replace />} />
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<Dashboard />} />
             <Route path="roadmap" element={<RoadmapTracker />} />
             <Route path="coding" element={<CodingArena />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="interviews" element={<MockInterviews />} />
+            <Route path="interviews/setup" element={<InterviewSetup />} />
+            <Route path="interviews/session" element={<InterviewSession />} />
+            <Route path="assessment" element={<SkillAssessment />} />
             <Route path="resume" element={<ResumeBuilder />} />
           </Route>
 

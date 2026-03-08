@@ -1,72 +1,95 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { ArrowRight, CheckCircle, Code, Cpu, LineChart } from 'lucide-react';
+import { ArrowRight, CheckCircle, Code, Cpu, LineChart, Sparkles, Zap, Shield } from 'lucide-react';
 
 const LandingPage = () => {
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-dark-bg selection:bg-primary-500 selection:text-white overflow-hidden">
+        <div className="min-h-screen bg-gray-50 dark:bg-dark-bg selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden transition-colors duration-500">
             <Navbar />
 
-            {/* Hero Section */}
-            <main className="pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pb-32">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-                    {/* Background Blobs */}
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl opacity-50 animate-pulse delay-1000"></div>
+            {/* --- HERO SECTION --- */}
+            <main className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+                {/* Background Glows */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+                    <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/30 rounded-full blur-[100px] animate-pulse-slow"></div>
+                    <div className="absolute top-40 right-10 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] animate-float"></div>
+                    <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-primary-600/20 rounded-full blur-[80px]"></div>
+                </div>
 
-                    <div className="lg:grid lg:grid-cols-12 lg:gap-8 relative z-10">
-                        <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left flex flex-col justify-center">
-                            <h1>
-                                <span className="block text-sm font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400 mb-2">
-                                    AI-Powered Career Growth
-                                </span>
-                                <span className="mt-1 block text-4xl tracking-tight font-extrabold sm:text-5xl xl:text-6xl">
-                                    <span className="block text-gray-900 dark:text-white">Master Your Next</span>
-                                    <span className="block gradient-text">Tech Interview</span>
-                                </span>
-                            </h1>
-                            <p className="mt-3 text-base text-gray-500 dark:text-gray-400 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                                Generate personalized roadmaps, practice with AI mock interviews, and get real-time feedback to land your dream job at top tech companies.
-                            </p>
-                            <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-                                <Link
-                                    to="/signup"
-                                    className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 md:id text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                                >
-                                    Get Started Free
-                                    <ArrowRight className="ml-2 w-5 h-5" />
-                                </Link>
-                                <p className="mt-3 text-sm text-gray-500 dark:text-gray-500">
-                                    No credit card required. Start clearly.
-                                </p>
-                            </div>
-                        </div>
-                        <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-                            <div className="relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md">
-                                <div className="relative block w-full bg-white dark:bg-dark-card rounded-2xl shadow-2xl overflow-hidden glass p-2 transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                                    <div className="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 p-8 space-y-4">
-                                        {/* Mock UI Element */}
-                                        <div className="flex items-center space-x-4 mb-6">
-                                            <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center">
-                                                <Code className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-                                            </div>
-                                            <div>
-                                                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                                                <div className="h-3 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                                            </div>
-                                        </div>
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 backdrop-blur-md mb-8 animate-fade-in-up">
+                        <span className="flex h-2 w-2 relative">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                        </span>
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">AI Interview Coach 2.0 is Live</span>
+                    </div>
+
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                        <span className="block text-gray-900 dark:text-white mb-2">Master Your Next</span>
+                        <span className="text-gradient">Tech Interview</span>
+                    </h1>
+
+                    <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-600 dark:text-gray-400 mb-10 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                        Stop memorizing answers. Start practicing with an <span className="text-cyan-500 font-semibold">AI Architect</span> that adapts to your skills, reviews your code, and helps you land the job.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                        <Link
+                            to="/signup"
+                            className="group relative px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black font-bold rounded-full shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 overflow-hidden"
+                        >
+                            <span className="relative z-10 flex items-center gap-2">
+                                Start Training Free <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </Link>
+
+                        <a href="#features" className="px-8 py-4 text-gray-600 dark:text-gray-300 font-medium hover:text-gray-900 dark:hover:text-white transition-colors">
+                            View Features
+                        </a>
+                    </div>
+
+                    {/* Dashboard Preview / Code Snippet */}
+                    <div className="mt-20 relative max-w-5xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+                        <div className="relative rounded-2xl bg-gray-900/50 backdrop-blur-xl border border-white/10 p-2 shadow-2xl">
+                            <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-purple-500/10 rounded-2xl pointer-events-none"></div>
+                            <div className="rounded-xl overflow-hidden bg-dark-bg border border-white/5">
+                                {/* Mock Interface Header */}
+                                <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/5">
+                                    <div className="flex gap-1.5">
+                                        <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
+                                        <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                                        <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+                                    </div>
+                                    <div className="ml-4 px-3 py-1 bg-black/50 rounded-full text-xs text-gray-400 font-mono">ai-coach-dashboard.tsx</div>
+                                </div>
+                                {/* Mock Interface Body */}
+                                <div className="p-8 grid md:grid-cols-2 gap-8 text-left">
+                                    <div className="space-y-4">
+                                        <div className="h-4 w-32 bg-cyan-500/20 rounded animate-pulse"></div>
+                                        <div className="h-8 w-3/4 bg-gray-700/50 rounded"></div>
                                         <div className="space-y-2">
-                                            <div className="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded"></div>
-                                            <div className="h-3 w-5/6 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                                            <div className="h-3 w-4/6 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                                            <div className="h-2 w-full bg-gray-800 rounded"></div>
+                                            <div className="h-2 w-5/6 bg-gray-800 rounded"></div>
+                                            <div className="h-2 w-4/6 bg-gray-800 rounded"></div>
                                         </div>
-                                        <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-100 dark:border-green-800">
-                                            <div className="flex items-center text-green-700 dark:text-green-400 font-semibold mb-1">
-                                                <CheckCircle className="w-4 h-4 mr-2" />
-                                                Excellent Answer!
-                                            </div>
-                                            <p className="text-xs text-green-600 dark:text-green-500">Your approach to the algorithm was optimal (O(n)).</p>
+                                        <div className="pt-4 flex gap-3">
+                                            <div className="h-10 w-24 bg-cyan-600/20 border border-cyan-500/30 rounded-lg"></div>
+                                            <div className="h-10 w-24 bg-gray-800 rounded-lg"></div>
                                         </div>
+                                    </div>
+                                    <div className="hidden md:block bg-black/30 rounded-lg p-4 border border-white/5 font-mono text-xs text-gray-400">
+                                        <div className="text-purple-400">const <span className="text-yellow-200">InterviewSession</span> = () ={'>'} {'{'}</div>
+                                        <div className="pl-4 text-cyan-300">const [score, setScore] = useState(0);</div>
+                                        <div className="pl-4">
+                                            <span className="text-pink-400">return</span> (
+                                        </div>
+                                        <div className="pl-8 text-green-300">
+                                            {'<AIInterviewer mode="behavioral" />'}
+                                        </div>
+                                        <div className="pl-4">);</div>
+                                        <div>{'}'}</div>
                                     </div>
                                 </div>
                             </div>
@@ -75,57 +98,70 @@ const LandingPage = () => {
                 </div>
             </main>
 
-            {/* Features Grid */}
-            <section className="py-16 bg-white dark:bg-dark-bg relative">
+            {/* --- FEATURES GRID --- */}
+            <section id="features" className="py-24 relative">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <h2 className="text-base text-primary-600 dark:text-primary-400 font-semibold tracking-wide uppercase">Features</h2>
-                        <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-                            Everything you need to succeed
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                            Everything you need to <span className="text-cyan-500">succeed</span>
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                            From personalized roadmaps to real-time speech analysis, we've built the ultimate career acceleration platform.
                         </p>
                     </div>
 
-                    <div className="mt-10">
-                        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-                            {/* Feature 1 */}
-                            <div className="group relative p-6 bg-white dark:bg-dark-card rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 hover:-translate-y-1">
-                                <div className="absolute -top-6 left-6">
-                                    <span className="inline-flex items-center justify-center p-3 bg-primary-500 rounded-xl shadow-lg group-hover:bg-primary-600 transition-colors">
-                                        <Code className="h-6 w-6 text-white" aria-hidden="true" />
-                                    </span>
-                                </div>
-                                <h3 className="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">AI Generated Roadmaps</h3>
-                                <p className="mt-5 text-base text-gray-500 dark:text-gray-400">
-                                    Get a step-by-step learning path tailored to your target role and current experience level.
-                                </p>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Feature 1 */}
+                        <div className="group p-8 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:border-cyan-500/50 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden backdrop-blur-sm">
+                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div className="w-14 h-14 rounded-2xl bg-cyan-100 dark:bg-cyan-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <Code className="w-7 h-7 text-cyan-600 dark:text-cyan-400" />
                             </div>
-
-                            {/* Feature 2 */}
-                            <div className="group relative p-6 bg-white dark:bg-dark-card rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 hover:-translate-y-1">
-                                <div className="absolute -top-6 left-6">
-                                    <span className="inline-flex items-center justify-center p-3 bg-purple-500 rounded-xl shadow-lg group-hover:bg-purple-600 transition-colors">
-                                        <Cpu className="h-6 w-6 text-white" aria-hidden="true" />
-                                    </span>
-                                </div>
-                                <h3 className="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Mock Interviews</h3>
-                                <p className="mt-5 text-base text-gray-500 dark:text-gray-400">
-                                    Practice with our AI interviewer that adapts to your responses and simulates real pressure.
-                                </p>
-                            </div>
-
-                            {/* Feature 3 */}
-                            <div className="group relative p-6 bg-white dark:bg-dark-card rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 hover:-translate-y-1">
-                                <div className="absolute -top-6 left-6">
-                                    <span className="inline-flex items-center justify-center p-3 bg-pink-500 rounded-xl shadow-lg group-hover:bg-pink-600 transition-colors">
-                                        <LineChart className="h-6 w-6 text-white" aria-hidden="true" />
-                                    </span>
-                                </div>
-                                <h3 className="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Real-time Analytics</h3>
-                                <p className="mt-5 text-base text-gray-500 dark:text-gray-400">
-                                    Track your progress, identify weak spots, and see how you improve over time.
-                                </p>
-                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">AI Roadmaps</h3>
+                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                Forget generic tutorials. Get a bespoke curriculum generated instantly based on your target role and skills gap.
+                            </p>
                         </div>
+
+                        {/* Feature 2 */}
+                        <div className="group p-8 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden backdrop-blur-sm">
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <Cpu className="w-7 h-7 text-purple-600 dark:text-purple-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Mock Interviews</h3>
+                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                Practice with a voice-enabled AI that adapts to your answers. It's like having a senior engineer on call 24/7.
+                            </p>
+                        </div>
+
+                        {/* Feature 3 */}
+                        <div className="group p-8 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:border-pink-500/50 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden backdrop-blur-sm">
+                            <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div className="w-14 h-14 rounded-2xl bg-pink-100 dark:bg-pink-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <LineChart className="w-7 h-7 text-pink-600 dark:text-pink-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Real-time Analytics</h3>
+                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                Track your WPM (Words Per Minute), filler words, and technical accuracy. See your growth over time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* --- TRUST BADGE --- */}
+            <section className="py-20 border-t border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-black/20">
+                <div className="max-w-4xl mx-auto px-4 text-center">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500 mb-8">
+                        Powered by Advanced AI Models
+                    </h3>
+                    <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                        {/* Simple text placeholders for logos for now */}
+                        <span className="text-2xl font-bold text-gray-400">Google Gemini</span>
+                        <span className="text-2xl font-bold text-gray-400">OpenAI</span>
+                        <span className="text-2xl font-bold text-gray-400">React</span>
+                        <span className="text-2xl font-bold text-gray-400">Node.js</span>
                     </div>
                 </div>
             </section>
