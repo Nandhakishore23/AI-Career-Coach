@@ -38,6 +38,13 @@ const InterviewSession = () => {
         } else {
             speak(initialQuestion);
         }
+
+        return () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                setIsSpeaking(false);
+            }
+        };
     }, []);
 
     // Scroll to bottom on feedback
@@ -49,9 +56,11 @@ const InterviewSession = () => {
 
     const speak = (text) => {
         if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Prevent overlapping/repeating voices
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.onstart = () => setIsSpeaking(true);
             utterance.onend = () => setIsSpeaking(false);
+            utterance.onerror = () => setIsSpeaking(false);
             window.speechSynthesis.speak(utterance);
         }
     };
