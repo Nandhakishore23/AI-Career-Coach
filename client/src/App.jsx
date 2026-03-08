@@ -17,6 +17,7 @@ import SkillAssessment from './pages/SkillAssessment';
 
 import Onboarding from './pages/Onboarding';
 import TopicPage from './pages/TopicPage';
+import Chatbot from './components/Chatbot';
 import './App.css';
 import './index.css';
 
@@ -46,6 +47,7 @@ function App() {
 
           <Route path="/learning" element={<TopicPage />} />
         </Routes>
+        <Chatbot />
       </div>
     </Router>
   );
