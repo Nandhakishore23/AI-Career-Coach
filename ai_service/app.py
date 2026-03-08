@@ -495,5 +495,41 @@ def generate_code_problem():
         print("Code Gen Error:", e)
         return jsonify({"error": str(e)}), 500
 
+@app.route('/chat/generate', methods=['POST'])
+def generate_chat_response():
+    try:
+        data = request.json
+        prompt_text = data.get('prompt', '')
+        context_messages = data.get('context', [])
+        
+        print(f"Chat request received. Context length: {len(context_messages)}")
+        
+        # Build conversational context
+        history_text = "Previous Conversation:\n"
+        for msg in context_messages:
+            role = "AI Coach" if msg.get("isBot") else "User"
+            history_text += f"{role}: {msg.get('text')}\n"
+            
+        full_prompt = f"""
+        Act as a helpful, expert Technical Career Coach and Mentor.
+        You are directly assisting a user on a placement preparation platform.
+        Respond in a conversational, supportive, and concise manner.
+        Do not use markdown blocks unless specifically providing code. Keep formatting clean.
+        
+        {history_text}
+        
+        User: {prompt_text}
+        AI Coach:"""
+        
+        response = model.generate_content(full_prompt)
+        # Ensure we just return plain conversational text
+        reply = response.text.replace('```json', '').replace('```', '').strip()
+        
+        return jsonify({"response": reply})
+        
+    except Exception as e:
+        print("Chat Gen Error:", e)
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
