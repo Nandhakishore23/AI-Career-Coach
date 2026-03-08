@@ -8,7 +8,7 @@ import {
     Maximize2, Minimize2, MoreVertical, Zap, Settings, Volume2, ArrowLeft, Layout,
     Lightbulb, Filter, BarChart3, Eye, EyeOff, Clock
 } from 'lucide-react';
-import { BLIND_75 } from '../data/blind75';
+import { BLIND_75, CATEGORIES } from '../data/blind75';
 import { CONTROLS } from '../data/dsa_problems';
 import { playSuccess, playError, playClick, playRun } from '../utils/sounds';
 import api from '../utils/api';
@@ -54,11 +54,13 @@ const CodingArena = () => {
     const [isLoadingProblem, setIsLoadingProblem] = useState(false);
     const [activeTab, setActiveTab] = useState('problem'); // problem, results
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false);
     const containerRef = useRef(null); // Ref for component-level fullscreen
 
     // Hint & Filter State
     const [showHintLevel, setShowHintLevel] = useState(0); // 0=hidden, 1=hint1, 2=hint2, 3=full solution
     const [difficultyFilter, setDifficultyFilter] = useState('All'); // All, Easy, Medium, Hard
+    const [categoryFilter, setCategoryFilter] = useState('all'); // all, must-know, pattern-mastery, practice
 
     // Solved Problem Tracking
     const [solvedIds, setSolvedIds] = useState(new Set());
@@ -110,8 +112,7 @@ const CodingArena = () => {
         go: 60          // Go (1.13.5)
     };
 
-    // Confetti State
-    const [showConfetti, setShowConfetti] = useState(false);
+
 
     const handleProblemSelect = async (problem) => {
         playClick();
@@ -429,19 +430,37 @@ if __name__ == "__main__":
     const solvedCount = roadmap.reduce((acc, topic) => acc + topic.problems.filter(p => solvedIds.has(p.id)).length, 0);
     const solvedPercent = totalProblems > 0 ? Math.round((solvedCount / totalProblems) * 100) : 0;
 
-    // Filter roadmap by difficulty
-    const filteredRoadmap = difficultyFilter === 'All'
+    // Filter roadmap by category and difficulty
+    let filteredRoadmap = categoryFilter === 'all'
         ? roadmap
-        : roadmap.map(topic => ({
+        : roadmap.filter(topic => topic.category === categoryFilter);
+
+    if (difficultyFilter !== 'All') {
+        filteredRoadmap = filteredRoadmap.map(topic => ({
             ...topic,
             problems: topic.problems.filter(p => p.difficulty === difficultyFilter)
         })).filter(topic => topic.problems.length > 0);
+    }
 
     const renderRoadmap = () => (
         <div className="max-w-7xl mx-auto w-full p-6 animate-fadeIn">
             <div className="mb-6 text-center pt-8">
                 <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-purple-400 mb-2">Coding Arena</h1>
-                <p className="text-gray-400">Master Data Structures & Algorithms</p>
+                <p className="text-gray-400">Master Data Structures & Algorithms — {totalProblems} Problems</p>
+            </div>
+
+            {/* Category Tabs */}
+            <div className="flex gap-2 mb-4 justify-center flex-wrap">
+                <button onClick={() => setCategoryFilter('all')}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${categoryFilter === 'all' ? 'bg-gray-700 text-white border border-gray-600' : 'text-gray-500 hover:text-gray-300 border border-transparent'}`}>
+                    📋 All Topics
+                </button>
+                {CATEGORIES.map(cat => (
+                    <button key={cat.id} onClick={() => setCategoryFilter(cat.id)}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${categoryFilter === cat.id ? `bg-${cat.color}-500/20 text-${cat.color}-400 border border-${cat.color}-500/30` : 'text-gray-500 hover:text-gray-300 border border-transparent'}`}>
+                        {cat.label}
+                    </button>
+                ))}
             </div>
 
             {/* Stats Bar */}

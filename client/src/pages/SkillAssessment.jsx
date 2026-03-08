@@ -48,7 +48,7 @@ const SkillAssessment = () => {
             const res = await axios.post(`${AI_SERVICE_URL}/assessment/generate`, {
                 topic: selectedTopic.name,
                 difficulty,
-                count: 5
+                count: 15
             });
             setQuestions(res.data);
             setMode('quiz');
